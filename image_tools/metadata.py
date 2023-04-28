@@ -46,21 +46,23 @@ def get_metadata(image: str | Image.Image) -> tuple[str, str, str]:
     if 'GPSInfo' in exif_table:
         gps_info = gpsphoto.getGPSData(image_file.filename)
 
+    for key, value in gps_info.items():
+        exif_table[key] = value
+
     tiff_metadata = {}
     if image_file.format.lower() == 'tiff':
         for tag in image_file.tag.items():
             tiff_metadata[TAGS.get(tag[0])] = tag[1]
 
-    return stringfy(exif_table, gps_info, tiff_metadata)
+    return stringfy(exif_table, tiff_metadata)
 
 
-def stringfy(exif_table: dict, gps_info: dict, tiff_metadata: dict) -> tuple[str, str, str]:
+def stringfy(exif_table: dict, tiff_metadata: dict) -> tuple[str, str, str]:
     """
     Parse tags tables and return them as strings.
 
     Args:
-        exif_table (dict): A ``dict`` of EXIF image data.
-        gps_info (dict): A ``dict`` of GPS image data.
+        exif_table (dict): A ``dict`` of EXIF and GPS image data.
         tiff_metadata (dict): A ``dict`` of TIFF image data (for ``.tiff`` images only).
 
     Returns:
@@ -71,12 +73,8 @@ def stringfy(exif_table: dict, gps_info: dict, tiff_metadata: dict) -> tuple[str
         EXIF_STRING += f'{str(key)}: {str(val)}\n'
         EXIF_STRING += f'---------------------------------------------\n'
 
-    GPS_STRING = ""
-    for key, val in gps_info.items():
-        GPS_STRING += f'{str(key)}: {str(val)}\n'
-
     TIFF_STRING = ""
     for key, val in tiff_metadata.items():
         TIFF_STRING += f'{str(key)}: {str(val)}\n'
 
-    return EXIF_STRING, GPS_STRING, TIFF_STRING
+    return EXIF_STRING, TIFF_STRING

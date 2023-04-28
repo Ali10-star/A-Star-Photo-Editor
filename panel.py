@@ -1,7 +1,7 @@
 """
 Reusable panel components, used throughout the app to display editor widgets.
 """
-from typing import Callable
+from typing import Callable, Optional
 import customtkinter as ctk
 import colorgram
 from tkinter import filedialog, messagebox, END
@@ -23,8 +23,8 @@ class CardPanel(ctk.CTkFrame):
     """
     Base card panel (primarily to display text).
     """
-    def __init__(self, parent: ctk.CTkFrame) -> None:
-        super().__init__(master=parent, fg_color=PANEL_BG)
+    def __init__(self, parent: ctk.CTkFrame, height: int = 200) -> None:
+        super().__init__(master=parent, fg_color=PANEL_BG, height=height)
         self.pack(fill='both', pady=4, ipady=8)
 
 
@@ -102,12 +102,14 @@ class FileNamePanel(Panel):
     """
     Panel to name and select output file type.
     """
-    def __init__(self, parent: ctk.CTkFrame, file_name: ctk.StringVar, file_extension: ctk.StringVar):
+    def __init__(self, parent: ctk.CTkFrame, file_name: ctk.StringVar, file_extension: ctk.StringVar,
+                 quality: ctk.IntVar):
         super().__init__(parent=parent)
 
         self.name = file_name
         self.name.trace('w', self.update_text)
         self.extension = file_extension
+        self.image_quality = quality
 
         ctk.CTkLabel(self, text='Save Image As').pack(
             anchor='w', padx=20, pady=2
@@ -141,6 +143,15 @@ class FileNamePanel(Panel):
             self, text='example.jpg', fg_color=DARK_GREY, corner_radius=8
         )
         self.output.pack(pady=5)
+
+        quality_frame = ctk.CTkFrame(self, fg_color='transparent')
+
+        ctk.CTkLabel(quality_frame, text='Quality:').grid(row=0, column=0, padx=2)
+        ctk.CTkEntry(quality_frame, width=45, textvariable=self.image_quality).grid(row=0, column=1)
+        ctk.CTkLabel(quality_frame, text='%').grid(row=0, column=3, padx=1)
+
+        quality_frame.pack(expand=True, fill='x', padx=82)
+
 
     def update_text(self, *args):
         """
@@ -257,8 +268,9 @@ class InfoPanel(CardPanel):
     """
     Card that displays information, with a header label.
     """
-    def __init__(self, parent: ctk.CTkFrame, panel_name: str, info_str: str) -> None:
-        super().__init__(parent=parent)
+    def __init__(self, parent: ctk.CTkFrame, panel_name: str, info_str: str,
+                 custom_height: int = 200) -> None:
+        super().__init__(parent=parent, height=custom_height)
 
         # Layout
         self.rowconfigure((0, 1), weight=1)
@@ -339,13 +351,15 @@ class ExportButton(ctk.CTkButton):
     """
     def __init__(self, parent: ctk.CTkFrame,
                  export_func: Callable, filename: ctk.StringVar,
-                 extension: ctk.StringVar, path: ctk.StringVar) -> None:
+                 extension: ctk.StringVar, path: ctk.StringVar,
+                 quality: ctk.IntVar) -> None:
         super().__init__(master=parent, text='Export', command=self.save)
 
         self.export_func = export_func
         self.filename = filename
         self.extension = extension
         self.path = path
+        self.image_quality = quality
 
         self.pack(side='bottom', pady=10)
 
@@ -354,5 +368,6 @@ class ExportButton(ctk.CTkButton):
         Call the export function and provide the full file name and output path.
         """
         self.export_func(
-            self.filename.get(), self.extension.get(), self.path.get()
+            self.filename.get(), self.extension.get(), self.path.get(),
+            int(self.image_quality.get())
         )

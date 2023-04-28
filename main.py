@@ -189,7 +189,7 @@ class App(ctk.CTk):
             anchor='center',
         )
 
-    def export_image(self, filename: str, extension: str, output_path: str) -> None:
+    def export_image(self, filename: str, extension: str, output_path: str, quality: int = 100) -> None:
         """
         Save image to the output folder.
 
@@ -199,7 +199,12 @@ class App(ctk.CTk):
             output_path (str): output folder path.
         """
         export_str = f'{output_path}/{filename}.{extension}'
-        self.image.save(export_str)
+
+        OPTIMIZE = True if quality != 100 else False
+        if quality == 100 and self.image.format.lower() in ('jpg', 'jpeg'):
+            quality = 'keep'
+
+        self.image.save(export_str, quality=quality, optimize=OPTIMIZE)
         messagebox.showinfo(
             title='Done', message='Successfully exported image file.'
         )

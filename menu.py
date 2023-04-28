@@ -26,14 +26,14 @@ class Menu(ctk.CTkTabview):
         self.add('Color')
         self.add('Effect')
         self.add('Export')
-        self.add('Info')
+        self.add('File')
 
         # Widgets
         PositionFrame(self.tab('Position'), pos_vars)
         ColorFrame(self.tab('Color'), image, color_vars)
         EffectFrame(self.tab('Effect'), effect_vars)
         ExportFrame(self.tab('Export'), export_func, save_thumb_func)
-        InfoFrame(self.tab('Info'), image)
+        InfoFrame(self.tab('File'), image)
 
 
 class InfoFrame(ctk.CTkFrame):
@@ -43,12 +43,10 @@ class InfoFrame(ctk.CTkFrame):
     def __init__(self, parent: ctk.CTkFrame, image: Image) -> None:
         super().__init__(master=parent, fg_color='transparent')
         self.pack(expand=True, fill='both')
-        EXIF_STRING, GPS_STRING, TIFF_STRING = Metadata.get_metadata(image)
+        EXIF_STRING, TIFF_STRING = Metadata.get_metadata(image)
 
         if EXIF_STRING:
-            InfoPanel(self, panel_name='EXIF Data', info_str=EXIF_STRING)
-        if GPS_STRING:
-            InfoPanel(self, panel_name='GPS Data', info_str=GPS_STRING)
+            InfoPanel(self, panel_name='EXIF & GPS Data', info_str=EXIF_STRING)
         if TIFF_STRING:
             InfoPanel(self, panel_name='TIFF Data', info_str=TIFF_STRING)
 
@@ -188,13 +186,14 @@ class ExportFrame(ctk.CTkFrame):
         self.file_name = ctk.StringVar()
         self.file_extension = ctk.StringVar(value='jpg')
         self.path = ctk.StringVar()
+        self.quality = ctk.DoubleVar(value=100)
 
         self.thumbnail_name = ctk.StringVar()
         self.thumbnail_path = ctk.StringVar()
         self.thumbnail_width = ctk.IntVar(value=200)
         self.thumbnail_height = ctk.IntVar(value=200)
 
-        FileNamePanel(self, self.file_name, self.file_extension)
+        FileNamePanel(self, self.file_name, self.file_extension, self.quality)
         FilePathPanel(self, self.path)
         ThumbnailPanel(
             self,
@@ -205,5 +204,6 @@ class ExportFrame(ctk.CTkFrame):
         )
 
         ExportButton(
-            self, export_func, self.file_name, self.file_extension, self.path
+            self, export_func, self.file_name, self.file_extension, self.path,
+            self.quality
         )

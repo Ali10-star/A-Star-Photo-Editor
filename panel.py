@@ -4,7 +4,7 @@ Reusable panel components, used throughout the app to display editor widgets.
 from typing import Callable
 import customtkinter as ctk
 import colorgram
-from tkinter import filedialog, END
+from tkinter import filedialog, messagebox, END
 from settings import *
 from color_tools import hex_tools as HEX
 from PIL.Image import Image
@@ -185,6 +185,55 @@ class FilePathPanel(Panel):
         Ask user to select the output directory to export image to.
         """
         self.path.set(filedialog.askdirectory())
+
+
+class ThumbnailPanel(Panel):
+    """
+    Panel to create a thumbnail of the image and export it.
+    """
+    def __init__(self, parent: ctk.CTkFrame,
+                 thumb_name: ctk.StringVar,
+                 thumb_path: ctk.StringVar,
+                 size: tuple[ctk.IntVar, ctk.IntVar],
+                 save_thumb_func: Callable[[str, tuple[int, int], str], None]
+        ) -> None:
+
+        super().__init__(parent=parent)
+        self.configure(height=200)
+        self.thumb_name = thumb_name
+        self.thumb_path = thumb_path
+        self.thumb_width = size[0]
+        self.thumb_height = size[1]
+        self.save_thumb_func = save_thumb_func
+
+        ctk.CTkLabel(self, text='Create thumbnail').place(relx=0.02, rely=0.01)
+
+        ctk.CTkLabel(self, text='Width').place(relx=0.10, rely=0.18)
+        ctk.CTkEntry(self, width=100, textvariable=self.thumb_width).place(relx=0.10, rely=0.30)
+
+        ctk.CTkLabel(self, text='x').place(relx=0.485, rely=0.30)
+
+        ctk.CTkLabel(self, text='Height').place(relx=0.55, rely=0.18)
+        ctk.CTkEntry(self, width=100, textvariable=self.thumb_height).place(relx=0.55, rely=0.30)
+
+        ctk.CTkLabel(self, text='Thumbnail name:').place(relx=0.02, rely=0.58)
+        ctk.CTkEntry(self, width=270, textvariable=self.thumb_name).place(relx=0.02, rely=0.70)
+        ctk.CTkButton(
+            self,
+            text='Save thumbnail to folder...',
+            width=270,
+            command=self.save_thumbnail_to,
+        ).place(relx=0.02, rely=0.85)
+
+    def save_thumbnail_to(self) -> None:
+        """
+        Ask user to select the output directory to export thumbnail to.
+        """
+        self.thumb_path.set(filedialog.askdirectory())
+        size = (self.thumb_width.get(), self.thumb_height.get())
+        self.save_thumb_func(self.thumb_name.get(), size,
+                             self.thumb_path.get()
+        )
 
 
 class DropDownPanel(ctk.CTkOptionMenu):

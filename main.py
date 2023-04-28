@@ -138,6 +138,7 @@ class App(ctk.CTk):
             self.effect_vars,
             self.image,
             self.export_image,
+            self.save_thumbnail,
         )
 
     def close_editor(self) -> None:
@@ -202,6 +203,21 @@ class App(ctk.CTk):
         messagebox.showinfo(
             title='Done', message='Successfully exported image file.'
         )
+
+    def save_thumbnail(self, name: str, size: tuple[int, int], output_path: str) -> None:
+        """
+        Save thumbnail to the output folder.
+
+        Args:
+            name (str): name of the saved file.
+            size tuple(int, int): size of the thumbnail
+            output_path (str): output folder path.
+        """
+        copy = self.image
+        export_str = f'{output_path}/{name}.jpg'
+        copy.thumbnail(size)
+        copy.save(export_str)
+        messagebox.showinfo(title='Done', message="Successfully created thumbnail.")
 
 
 if __name__ == '__main__':

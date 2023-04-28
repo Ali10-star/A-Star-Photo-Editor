@@ -8,13 +8,15 @@ from settings import *
 from typing import Any, Callable
 from PIL.Image import Image
 
+
 class Menu(ctk.CTkTabview):
     """
     Main tabbed menu for the editor. Subtype of customtkinter.CTkTabView
     """
     def __init__(
         self, parent: ctk.CTk, pos_vars: dict[Any], color_vars: dict[Any],
-        effect_vars: dict[Any], image: Image, export_func: Callable[[str, str, str],None]
+        effect_vars: dict[Any], image: Image, export_func: Callable[[str, str, str],None],
+        save_thumb_func: Callable[[str, str, str],None]
     ):
         super().__init__(master=parent)
         self.grid(row=0, column=0, sticky='nsew', padx=10, pady=10)
@@ -30,7 +32,7 @@ class Menu(ctk.CTkTabview):
         PositionFrame(self.tab('Position'), pos_vars)
         ColorFrame(self.tab('Color'), image, color_vars)
         EffectFrame(self.tab('Effect'), effect_vars)
-        ExportFrame(self.tab('Export'), export_func)
+        ExportFrame(self.tab('Export'), export_func, save_thumb_func)
         InfoFrame(self.tab('Info'), image)
 
 
@@ -179,7 +181,7 @@ class ExportFrame(ctk.CTkFrame):
     """
     CTkFrame to export the open image in different output formats.
     """
-    def __init__(self, parent: ctk.CTkFrame, export_func: Callable):
+    def __init__(self, parent: ctk.CTkFrame, export_func: Callable, thumbnail_save_func: Callable):
         super().__init__(master=parent, fg_color='transparent')
         self.pack(expand=True, fill='both')
 
@@ -187,8 +189,21 @@ class ExportFrame(ctk.CTkFrame):
         self.file_extension = ctk.StringVar(value='jpg')
         self.path = ctk.StringVar()
 
+        self.thumbnail_name = ctk.StringVar()
+        self.thumbnail_path = ctk.StringVar()
+        self.thumbnail_width = ctk.IntVar(value=200)
+        self.thumbnail_height = ctk.IntVar(value=200)
+
         FileNamePanel(self, self.file_name, self.file_extension)
         FilePathPanel(self, self.path)
+        ThumbnailPanel(
+            self,
+            self.thumbnail_name,
+            self.thumbnail_path,
+            (self.thumbnail_width, self.thumbnail_height),
+            thumbnail_save_func
+        )
+
         ExportButton(
             self, export_func, self.file_name, self.file_extension, self.path
         )

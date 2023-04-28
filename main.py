@@ -201,7 +201,8 @@ class App(ctk.CTk):
         export_str = f'{output_path}/{filename}.{extension}'
 
         OPTIMIZE = True if quality != 100 else False
-        if quality == 100 and self.image.format.lower() in ('jpg', 'jpeg'):
+        IS_JPG = self.image.format and self.image.format.lower() in ('jpg', 'jpeg')
+        if quality == 100 and IS_JPG:
             quality = 'keep'
 
         self.image.save(export_str, quality=quality, optimize=OPTIMIZE)

@@ -7,6 +7,9 @@ such as EXIF, GPS, and TIFF tags.
 from PIL import Image
 from PIL.ExifTags import TAGS, GPSTAGS
 from GPSPhoto import gpsphoto
+import os
+
+ONE_MEGABYTE = 1048576
 
 def get_image(image: str | Image.Image) -> Image.Image:
     """
@@ -24,6 +27,23 @@ def get_image(image: str | Image.Image) -> Image.Image:
 def get_bits(image: Image.Image) -> str:
     return str(image.bits) if "bits" in image.__dir__() else None
 
+def format_size(size: int) -> str:
+    """
+    Return a formatted string of a file size in KB or MB.
+
+    Args:
+        size (int): Size in bytes
+
+    Returns:
+        str: formatted result string
+    """
+    result = 0
+    if size >= ONE_MEGABYTE:
+        result = (size / (1024 * 1024))
+        return f"{result:.2f} MB"
+    else:
+        result = size / 1024
+        return f"{result:.2f} KB"
 
 def get_image_info(image: Image.Image) -> str:
     """
@@ -36,7 +56,9 @@ def get_image_info(image: Image.Image) -> str:
         str: image information as a multi-line string
     """
     bit_count = get_bits(image)
+    bytes = os.path.getsize(image.filename)
     info_str = f"File: \"{image.filename}\"\n"
+    info_str += f"Size: {format_size(bytes)}\n"
     if bit_count: info_str += f"Number of bits: {bit_count}\n"
     info_str += f"Entropy: {image.entropy():.3f}\n"
     if image.format:

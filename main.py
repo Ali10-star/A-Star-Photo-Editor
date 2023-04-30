@@ -227,6 +227,8 @@ class App(ctk.CTk):
             output_path (str): output folder path.
         """
         copy = self.image
+        if copy.mode == 'P':
+            copy = copy.convert('RGB')
         export_str = f'{output_path}/{name}.jpg'
         copy.thumbnail(size)
         copy.save(export_str)

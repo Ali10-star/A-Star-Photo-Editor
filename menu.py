@@ -44,7 +44,9 @@ class InfoFrame(ctk.CTkFrame):
         super().__init__(master=parent, fg_color='transparent')
         self.pack(expand=True, fill='both')
         EXIF_STRING, TIFF_STRING = Metadata.get_metadata(image)
+        IMAGE_INFO = Metadata.get_image_info(image)
 
+        InfoPanel(self, panel_name='Image Data', info_str=IMAGE_INFO, custom_box_height=130)
         if EXIF_STRING:
             InfoPanel(self, panel_name='EXIF & GPS Data', info_str=EXIF_STRING)
         if TIFF_STRING:

@@ -1,12 +1,11 @@
 import customtkinter as ctk
 from tkinter import messagebox, Event
-from PIL import Image, ImageTk
+from PIL import Image, ImageTk, ImageOps
 # App-specific imports
 from image_widgets import ImageImport, ImageOutput, CloseOutputButton
 from image_tools.manipulator import ImageManipulator
 from menu import Menu
 from settings import *
-
 
 class App(ctk.CTk):
     """
@@ -25,7 +24,7 @@ class App(ctk.CTk):
         ctk.set_default_color_theme('theme/custom.json')
         self.geometry('1250x660+50+50')
         self.title('A-Star Photo Editor')
-        self.iconbitmap('theme/image-editing.ico')
+        self.iconbitmap('theme/logo.ico')
         self.init_parameters()
 
         # Layout
@@ -82,38 +81,6 @@ class App(ctk.CTk):
         for var in all_vars:
             var.trace('w', self.manipulate_image)
 
-    def manipulate_image(self, *args):
-        self.image = self.original
-        manipulator = ImageManipulator(self.image)
-
-        manipulator.rotate_image(self.position_vars['rotate'].get())
-
-        manipulator.zoom_image(self.position_vars['zoom'].get())
-
-        manipulator.flip_image(self.position_vars['flip'].get())
-
-        manipulator.apply_brightness(self.color_vars['brightness'].get())
-
-        manipulator.apply_vibrance(self.color_vars['vibrance'].get())
-
-        manipulator.apply_grayscale(self.color_vars['grayscale'].get())
-
-        manipulator.invert_colors(self.color_vars['invert'].get())
-
-        manipulator.apply_sepia(self.color_vars['sepia'].get())
-
-        manipulator.apply_4color_filter(self.color_vars['4-color'].get())
-
-        manipulator.blur_image(self.effect_vars['blur'].get())
-
-        manipulator.change_contrast(self.effect_vars['contrast'].get())
-
-        manipulator.change_balance(self.effect_vars['balance'].get())
-
-        manipulator.apply_effect(self.effect_vars['effect'].get())
-
-        self.image = manipulator.image_result
-        self.display_image()
 
     def import_image(self, path: str) -> None:
         """
@@ -141,6 +108,44 @@ class App(ctk.CTk):
             self.save_thumbnail,
         )
 
+    def manipulate_image(self, *args):
+        self.image = self.original
+        manipulator = ImageManipulator(self.image)
+
+        manipulator.rotate_image(self.position_vars['rotate'].get())
+
+        manipulator.zoom_image(self.position_vars['zoom'].get())
+
+        manipulator.flip_image(self.position_vars['flip'].get())
+
+        manipulator.apply_brightness(self.color_vars['brightness'].get())
+
+        manipulator.apply_vibrance(self.color_vars['vibrance'].get())
+
+        manipulator.apply_grayscale(self.color_vars['grayscale'].get())
+
+        try:
+            manipulator.invert_colors(self.color_vars['invert'].get())
+        except OSError:
+            messagebox.showerror("Invalid operation", "Cannot apply this operation on this type of image.")
+
+        manipulator.apply_sepia(self.color_vars['sepia'].get())
+
+        manipulator.apply_4color_filter(self.color_vars['4-color'].get())
+
+        manipulator.blur_image(self.effect_vars['blur'].get())
+
+        manipulator.change_contrast(self.effect_vars['contrast'].get())
+
+        manipulator.change_balance(self.effect_vars['balance'].get())
+
+        manipulator.apply_effect(self.effect_vars['effect'].get())
+
+
+        self.image = manipulator.image_result
+        self.display_image()
+
+
     def close_editor(self) -> None:
         """
         Close the editing panel and the open image.
@@ -150,6 +155,7 @@ class App(ctk.CTk):
         self.editor_menu.grid_forget()
         self.editor_menu.pack_forget()
         self.image_import = ImageImport(parent=self, import_func=self.import_image)
+
 
     def resize_image(self, event: Event) -> None:
         """
@@ -172,6 +178,7 @@ class App(ctk.CTk):
             self.image_height = int(self.image_width / self.image_ratio)
 
         self.display_image()
+
 
     def display_image(self) -> None:
         """

@@ -21,6 +21,30 @@ def get_image(image: str | Image.Image) -> Image.Image:
     """
     return Image.open(image) if isinstance(image, str) else image
 
+def get_bits(image: Image.Image) -> str:
+    return str(image.bits) if "bits" in image.__dir__() else None
+
+
+def get_image_info(image: Image.Image) -> str:
+    """
+    Get multiple attributes of the image file as a string.
+
+    Args:
+        image (Image.Image): The provided image file.
+
+    Returns:
+        str: image information as a multi-line string
+    """
+    bit_count = get_bits(image)
+    info_str = f"File: \"{image.filename}\"\n"
+    if bit_count: info_str += f"Number of bits: {bit_count}\n"
+    info_str += f"Entropy: {image.entropy():.3f}\n"
+    if image.format:
+        info_str += f"Format: {image.format} ({image.format_description})\n"
+
+    info_str += f"Number of bands: {len(image.getbands())}.\nSize: {image.size[0]}x{image.size[1]}"
+    return info_str
+
 
 def get_metadata(image: str | Image.Image) -> tuple[str, str, str]:
     """

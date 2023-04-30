@@ -46,6 +46,9 @@ class ImageManipulator:
     """
     def __init__(self, image_file: Image.Image) -> None:
         self.used_image = image_file
+        if self.used_image.mode == 'P':
+            self.used_image = self.used_image.convert('RGB')
+
 
     def rotate_image(self, rotation_angle: float) -> None:
         """
@@ -125,7 +128,10 @@ class ImageManipulator:
             invert_flag (bool): Set to True, if the filter is chosen.
         """
         if invert_flag:
-            self.used_image = ImageOps.invert(self.used_image)
+            try:
+                self.used_image = ImageOps.invert(self.used_image)
+            except:
+                raise OSError
 
     def apply_sepia(self, sepia_flag: bool) -> None:
         """

@@ -23,8 +23,8 @@ class CardPanel(ctk.CTkFrame):
     """
     Base card panel (primarily to display text).
     """
-    def __init__(self, parent: ctk.CTkFrame, height: int = 200) -> None:
-        super().__init__(master=parent, fg_color=PANEL_BG, height=height)
+    def __init__(self, parent: ctk.CTkFrame) -> None:
+        super().__init__(master=parent, fg_color=PANEL_BG)
         self.pack(fill='both', pady=4, ipady=8)
 
 
@@ -269,8 +269,8 @@ class InfoPanel(CardPanel):
     Card that displays information, with a header label.
     """
     def __init__(self, parent: ctk.CTkFrame, panel_name: str, info_str: str,
-                 custom_height: int = 200) -> None:
-        super().__init__(parent=parent, height=custom_height)
+                 custom_box_height: int = 200) -> None:
+        super().__init__(parent=parent)
 
         # Layout
         self.rowconfigure((0, 1), weight=1)
@@ -280,7 +280,7 @@ class InfoPanel(CardPanel):
             self, text=panel_name, font=('Open Sans', 13, 'bold')
         ).grid(row=0, column=0, sticky='W', padx=10)
 
-        self.info = ctk.CTkTextbox(master=self, fg_color=PANEL_BG)
+        self.info = ctk.CTkTextbox(master=self, fg_color=PANEL_BG, height=custom_box_height)
         self.info.insert('0.0', info_str)
         self.info.configure(state='disabled')
         self.info.grid(row=1, column=0, columnspan=2, sticky='ew')
@@ -326,6 +326,17 @@ class ColorsPanel(CardPanel):
 
             col += 1
             if col > 1: col, row = 0, row + 1
+
+
+class ButtonPanel(CardPanel):
+    """
+    Button card to apply single functionality.
+    """
+    def __init__(self, parent: ctk.CTkFrame, button_text: str, command_func: Callable) -> None:
+        super().__init__(parent=parent)
+        ctk.CTkButton(self, corner_radius=8,
+                      text=button_text,
+                      command=command_func).pack(expand=True, fill='x', padx=10)
 
 
 class RevertButton(ctk.CTkButton):

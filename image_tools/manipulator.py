@@ -4,6 +4,7 @@ Module responsible for providing image manipulation functionalities.
 
 from settings import *
 from PIL import Image, ImageOps, ImageEnhance, ImageFilter
+import numpy as np
 
 def sepia_palette() -> list[int]:
     """
@@ -186,6 +187,27 @@ class ImageManipulator:
         if balance_value != BALANCE_DEFAULT:
             balance_enhancer = ImageEnhance.Color(self.used_image)
             self.used_image = balance_enhancer.enhance(balance_value)
+
+
+    def change_hue(self, hue_value: int) -> None:
+        """
+        Change the image hue (color) by a given amount.
+
+        Args:
+            hue_value (int): Ranges from -100 to 100.
+        """
+        if hue_value != HUE_DEFAULT:
+            used_operation = np.add if hue_value > 0 else np.subtract
+            hue_value = abs(hue_value)
+            hsv_im = self.used_image.convert("HSV")
+            h_chan, s_chan, v_chan = hsv_im.split()
+
+            h_chan_np = np.array(h_chan)
+            h_chan_np = used_operation(h_chan_np, hue_value)
+            h_chan = Image.fromarray(h_chan_np)
+
+            result = Image.merge("HSV", (h_chan, s_chan, v_chan))
+            self.used_image = result.convert("RGB")
 
     def apply_effect(self, effect_name: str) -> None:
         """

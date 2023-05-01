@@ -167,6 +167,13 @@ class EffectFrame(ctk.CTkFrame):
             min_value=0,
             max_value=10,
         )
+        SliderPanel(
+            self,
+            panel_name='Hue',
+            data_var=effect_vars['hue'],
+            min_value=-100,
+            max_value=100,
+        )
 
         RevertButton(
             self,
@@ -174,6 +181,7 @@ class EffectFrame(ctk.CTkFrame):
             (effect_vars['blur'], BLUR_DEFAULT),
             (effect_vars['contrast'], CONTRAST_DEFAULT),
             (effect_vars['balance'], BALANCE_DEFAULT),
+            (effect_vars['hue'], HUE_DEFAULT),
         )
 
 

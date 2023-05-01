@@ -14,6 +14,7 @@ EFFECT_OPTIONS = ['None', 'Emboss', 'Find edges', 'Contour', 'Edge enhance']
 THEME_OPTIONS = ['Light', 'Dark', 'System']
 BRIGHTNESS_DEFAULT = 1
 VIBRANCE_DEFAULT = 1
+HUE_DEFAULT = 0
 GRAYSCALE_DEFAULT = False
 SEPIA_DEFAULT = False
 FOUR_COLOR_DEFAULT = False

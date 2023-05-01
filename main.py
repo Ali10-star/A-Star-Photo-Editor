@@ -69,6 +69,7 @@ class App(ctk.CTk):
             'blur': ctk.DoubleVar(value=BLUR_DEFAULT),
             'contrast': ctk.IntVar(value=CONTRAST_DEFAULT),
             'balance': ctk.IntVar(value=BALANCE_DEFAULT),
+            'hue': ctk.IntVar(value=HUE_DEFAULT),
             'effect': ctk.StringVar(value=EFFECT_OPTIONS[0]),
         }
 
@@ -138,6 +139,8 @@ class App(ctk.CTk):
         manipulator.change_contrast(self.effect_vars['contrast'].get())
 
         manipulator.change_balance(self.effect_vars['balance'].get())
+
+        manipulator.change_hue(self.effect_vars['hue'].get())
 
         manipulator.apply_effect(self.effect_vars['effect'].get())
 

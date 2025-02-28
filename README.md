@@ -10,5 +10,5 @@ The app's theme adapts to your system settings.
 This is a preview of the ligth theme:
 ![light](https://user-images.githubusercontent.com/80627670/234813123-3b02c8de-127f-4e74-b217-388e3ad1c3b9.png)
 
-And this is a peak of the dark theme:
+And this is a peek at the dark theme:
 ![dark](https://user-images.githubusercontent.com/80627670/234813527-c9b2d911-d882-4849-93bc-6b593d9ed3ca.png)
